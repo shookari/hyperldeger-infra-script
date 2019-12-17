@@ -41,10 +41,12 @@ peer channel fetch config genesis.pb2 -o orderer.example.com:7050 -c byfn-sys-ch
 configtxlator proto_decode --input genesis.pb2 --type common.Block | jq .data.data[0].payload.data.config > genesisBlock2.json
 
 echo "org3 exist confirm"
-jq .channel_group.groups.Consortiums.groups.SampleConsortium.groups.Org3MSP genesisBlock2.json | grep '"msp_identifier": "Org3MSP"' | wc -l
-res=$?
-if [ $res -eq 0 ]; then
+res=$(jq .channel_group.groups.Consortiums.groups.SampleConsortium.groups.Org3MSP genesisBlock2.json | grep '"msp_identifier": "Org3MSP"' | wc -l)
+if [ $res -ne 0 ]; then
 	echo "SUCC"
 else
 	echo "FAIL"
+    exit 1
 fi
+
+exit 0
